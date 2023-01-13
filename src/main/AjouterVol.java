@@ -15,6 +15,8 @@ import java.awt.Scrollbar;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
@@ -24,32 +26,29 @@ import javax.swing.JRadioButton;
 import javax.swing.JList;
 import java.awt.Color;
 
-public class AjouterVol extends JFrame {
+public class AjouterVol extends JFrame implements ItemListener  {
 
 	private JPanel contentPane;
 	private JTextField id;
-
+	Choice choiceAvion;
+	Choice choiceArv;
+	Choice choiceDpt;
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AjouterVol frame = new AjouterVol();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+
 
 	/**
 	 * Create the frame.
 	 */
 	public AjouterVol() {
 		
+		JButton AjouterVol = new JButton("OK");
+		JRadioButton escale = new JRadioButton("Escale");
+		 choiceAvion = new Choice();
+		 choiceArv = new Choice();
+		
+		AjouterVol.setEnabled(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 615, 408);
 		contentPane = new JPanel();
@@ -66,27 +65,32 @@ public class AjouterVol extends JFrame {
 		contentPane.add(id);
 		id.setColumns(10);
 		
-		Choice choiceAvion = new Choice();
-		choiceAvion.setBounds(127, 79, 103, 20);
+	
+		choiceAvion.setBounds(127, 121, 103, 20);
 		int i;
-		for(i=0;i<MainR.avions.size();i++) {
+		/*for(i=0;i<MainR.avions.size();i++) {
 			choiceAvion.add(MainR.avions.get(i).name);
+		}*/
+		for(int j=0;j<MainR.aeroports.get(0).avions.size();j++) {
+			choiceAvion.add(MainR.aeroports.get(0).avions.get(j).GetName());
+			
 		}
 		contentPane.add(choiceAvion);
 		
 		JLabel lblNewLabel_1 = new JLabel("Avion");
-		lblNewLabel_1.setBounds(10, 79, 46, 14);
+		lblNewLabel_1.setBounds(10, 121, 111, 14);
 		contentPane.add(lblNewLabel_1);
 		
 		JLabel lblNewLabel_2 = new JLabel("Aeroport de d\u00E9part");
-		lblNewLabel_2.setBounds(10, 121, 111, 14);
+		lblNewLabel_2.setBounds(10, 79, 111, 14);
 		contentPane.add(lblNewLabel_2);
 		
-		Choice choiceDpt = new Choice();
-		choiceDpt.setBounds(127, 121, 103, 20);
+		 choiceDpt = new Choice();
+		choiceDpt.setBounds(127, 79, 103, 20);
 		for(i=0;i<MainR.aeroports.size();i++) {
 			choiceDpt.add(MainR.aeroports.get(i).name);
 		}
+		choiceDpt.addItemListener(this);
 		contentPane.add(choiceDpt);
 		
 		
@@ -95,10 +99,15 @@ public class AjouterVol extends JFrame {
 		
 		contentPane.add(lblNewLabel_3);
 		
-		Choice choiceArv = new Choice();
+		
 		choiceArv.setBounds(127, 159, 103, 20);
-		for(i=0;i<MainR.aeroports.size();i++) {
+		/*for(i=0;i<MainR.aeroports.size();i++) {
 			choiceArv.add(MainR.aeroports.get(i).name);
+		}*/
+		for(int j=0;j<MainR.aeroports.size();j++) {
+			if(MainR.aeroports.get(j).capaciteAv>MainR.aeroports.get(j).avions.size()&&MainR.aeroports.get(j).name!=MainR.aeroports.get(0).name) {
+				choiceArv.add(MainR.aeroports.get(j).name);
+			}
 		}
 		contentPane.add(choiceArv);
 		
@@ -148,9 +157,12 @@ public class AjouterVol extends JFrame {
 		JButton AjouterAero = new JButton("Ajouter");
 		AjouterAero.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				AjouterVol.setEnabled(true);
 				AjouterAero.setEnabled(MainR.b);
 				model.addElement(choiceArv.getSelectedItem());
+				if(model.size()>1) {
+					escale.setEnabled(false);
+				}
 			}
 		});
 		AjouterAero.setBounds(251, 155, 89, 23);
@@ -162,7 +174,7 @@ public class AjouterVol extends JFrame {
 		contentPane.add(lblNewLabel_3_1);
 
 	
-		JRadioButton escale = new JRadioButton("Escale");
+	
 		escale.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(MainR.b==false) {
@@ -179,7 +191,7 @@ public class AjouterVol extends JFrame {
 		escale.setBounds(127, 203, 103, 23);
 		contentPane.add(escale);
 		
-		JButton AjouterVol = new JButton("OK");
+		
 		AjouterVol.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ArrayList<Aeroport> aeroportVisite=new ArrayList<Aeroport>();
@@ -192,8 +204,15 @@ public class AjouterVol extends JFrame {
 					}
 				}
 				
-				MainR.addVol(new Vol(id.getText(),MainR.getAvions(choiceAvion.getSelectedIndex()),MainR.getAeroports(choiceDpt.getSelectedIndex()),aeroportVisite,LocalTime.of(Integer.valueOf(choiceHeure.getSelectedItem()),Integer.valueOf(choiceMinute.getSelectedItem())),TypeVol.Direct));
 				
+				//
+				for(int i=0;i<MainR.aeroports.size();i++) {
+					if(MainR.aeroports.get(i).name==choiceDpt.getSelectedItem()) {
+						
+						MainR.addVol(new Vol(id.getText(),MainR.aeroports.get(i).avions.get(choiceAvion.getSelectedIndex()),MainR.aeroports.get(i),aeroportVisite,LocalTime.of(Integer.valueOf(choiceHeure.getSelectedItem()),Integer.valueOf(choiceMinute.getSelectedItem())),TypeVol.Direct));
+					break;
+					}
+				}
 				
 				
 			}
@@ -206,5 +225,27 @@ public class AjouterVol extends JFrame {
 	public void c() {
 		this.setVisible(false);
 		this.dispose();
+	}
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		// TODO Auto-generated method stub
+		choiceAvion.removeAll();
+		choiceArv.removeAll();
+		for(int i=0;i<MainR.aeroports.size();i++) {
+			
+			if(MainR.aeroports.get(i).name==choiceDpt.getSelectedItem()) {
+			
+				for(int j=0;j<MainR.aeroports.get(i).avions.size();j++) {
+					choiceAvion.add(MainR.aeroports.get(i).avions.get(j).GetName());
+					choiceAvion.setEnabled(true);
+					choiceArv.setEnabled(true);
+				}
+			}else {
+				if(MainR.aeroports.get(i).capaciteAv>MainR.aeroports.get(i).avions.size()) {
+					choiceArv.add(MainR.aeroports.get(i).name);
+				}
+				
+			}
+		}
 	}
 }

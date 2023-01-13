@@ -40,41 +40,66 @@ public class MainR {
 		Point p2=new Point(220,27);
 		Point p4=new Point(250,280);
 	   avionR=new ArrayList<JLabel>();
-		aeroports.add(new Aeroport("a1",p1));
-		avions.add((new Avion("av1",5000,Etat.Standby,30,p1)));
-		aeroports.add(new Aeroport("a3",p3));
-		aeroports.add(new Aeroport("a2",p2));
-		aeroports.add(new Aeroport("a4",p4));
-		avions.add((new Avion("av2",5000,Etat.Standby,2,p2)));
-	
+		aeroports.add(new Aeroport("a1",p1,30));
+		avions.add((new Avion("av1",2000,Etat.Standby,15,p1)));
+		aeroports.get(0).addAvion(avions.get(avions.size()-1));
+		aeroports.add(new Aeroport("a3",p3,30));
+		aeroports.add(new Aeroport("a2",p2,30));
+		aeroports.add(new Aeroport("a4",p4,30));
+		avions.add((new Avion("av2",5000,Etat.Standby,20,p2)));
+		aeroports.get(2).addAvion(avions.get(avions.size()-1));
+		
 	}
 
 	
 	public static void update(Point current,String avion,int vol) {
-		
-	
+		 int B=0;
+		int a=0;
 			for(int i=0;i<avions.size();i++) {
 			
 				
-				if(avions.get(i).name==avion) {
+				if(avions.get(i).GetName()==avion) {
 					avionR.get(i).setBounds(current.x, current.y, 46, 14);
-					if(vols.get(vol).aeroportVisite.get(0).localisation.x==current.x&&vols.get(vol).aeroportVisite.get(0).localisation.y==current.y) {
+					a=i;
+					if(vols.get(vol).aeroportVisite.get(0).localisation.distance(current)<5) {
 						avions.get(i).end();
+						vols.get(vol).aeroportVisite.get(0).addAvion(avions.get(i));
 						
-						if(vols.get(vol).aeroportVisite.size()>1) {
 							vols.get(vol).aeroportVisite.remove(0);
-							vols.get(vol).run();
-						}
+							
+						
 						
 					}
 					
 				}else {
-				double distance=Math.sqrt(Math.pow(current.x-(avions.get(i).position.x), 2)+Math.pow(current.x-(avions.get(i).position.x), 2));
-				if(distance<3) {
+				if(avions.get(i).getEtat()==Etat.Active) {
+				double distance=current.distance(avions.get(i).getPosition());
+				if(distance<20) {
+				
 					avionR.get(i).setForeground(Color.red);
-					
+					B=2;
+				}else {
+					if(distance<40) {
+						
+						B=1;
+					}else {
+						B=0;
+}
 				}
 				}
+				}
+			}
+			
+			if(B==1||(avions.get(a).getCapacite()<800&&avions.get(a).getCapacite()>0)) {
+				System.out.println(avions.get(a).getCapacite());
+				avionR.get(a).setForeground(Color.yellow);
+			}else{
+				if(B==2||avions.get(a).getCapacite()==0) {
+					avionR.get(a).setForeground(Color.red);
+					avions.get(a).crash();
+					vols.get(vol).aeroportVisite.removeAll(vols.get(vol).aeroportVisite);
+				}else {
+				avionR.get(a).setForeground(Color.green);}
 			}
 		
 	}
@@ -93,7 +118,7 @@ public class MainR {
 		
 	}
 	public static void addAvionR(Point position,String name) {
-	
+		
 		avionR.add(new JLabel(name));
 		avionR.get(avionR.size()-1).setForeground(Color.GREEN);
 		

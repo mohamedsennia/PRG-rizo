@@ -2,19 +2,50 @@ package main;
 
 public class Avion extends Thread {
 String name;
-int Capacité;
+int Capacite;
 Etat etat;
 int vitesse;
 Point position;
-public Avion(String name, int capacité, Etat etat, int vitesse,Point position) {
+public Avion(String name, int Capacite, Etat etat, int vitesse,Point position) {
 	super();
 	this.name = name;
-	Capacité = capacité;
+	this.Capacite = Capacite;
 	this.etat = etat;
 	this.vitesse = vitesse;
-	this.position=position;
+	this.position=new Point(position.x,position.y);
 	MainR.addAvionR(position,name);
 }
+public int getCapacite() {
+	return Capacite;
+}
+public void setCapacite(int capacite) {
+	Capacite = capacite;
+}
+public String GetName() {
+	return name;
+}
+public void SetName(String name) {
+	this.name = name;
+}
+public Etat getEtat() {
+	return etat;
+}
+public void setEtat(Etat etat) {
+	this.etat = etat;
+}
+public int getVitesse() {
+	return vitesse;
+}
+public void setVitesse(int vitesse) {
+	this.vitesse = vitesse;
+}
+public Point getPosition() {
+	return position;
+}
+public void setPosition(Point position) {
+	this.position = position;
+}
+
 public void start(float a,float b,int o,int index) {
 	int distance;
 	int time;
@@ -43,11 +74,11 @@ public void start(float a,float b,int o,int index) {
 	
 		Thread.sleep(time);
 		
-		position.x=newX;
-		position.y=newY;
+		this.position.x=newX;
+		this.position.y=newY;
 		
-		
-		MainR.update(position, name, index);
+		this.Capacite=this.Capacite-20;
+		MainR.update(this.position, name, index);
 		
 		}while(etat.equals(Etat.Active));
 	} catch (InterruptedException e) {
@@ -56,8 +87,10 @@ public void start(float a,float b,int o,int index) {
 	}
 }
 public void end() {
-	System.out.println(position);
-	this.etat=Etat.Standby;
+	
+	this.etat=Etat.Idel;
 }
-
+public void crash() {
+	this.etat=Etat.Broken;
+}
 }

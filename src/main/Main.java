@@ -67,9 +67,18 @@ public class Main extends JFrame {
 		AjouterVol.setBounds(479, 129, 218, 23);
 		panel.add(AjouterVol);
 		
-		JButton Réacheminer = new JButton("R\u00E9acheminer un vol");
-		Réacheminer.setBounds(479, 203, 218, 23);
-		panel.add(Réacheminer);
+		JButton Reacheminer = new JButton("R\u00E9acheminer un vol");
+		Reacheminer.setBounds(479, 203, 218, 23);
+		Reacheminer.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				Reacheminer r= new Reacheminer();
+				r.setVisible(true);
+			}
+		});
+		panel.add(Reacheminer);
 		
 		JButton Autre = new JButton("Autre param\u00E8tres");
 		Autre.setBounds(479, 279, 218, 23);
