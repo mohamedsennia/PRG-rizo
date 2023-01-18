@@ -1,6 +1,8 @@
 package main;
 
-public enum Etat {
+import java.io.Serializable;
+
+public enum Etat implements Serializable{
 Active,
 Standby,
 Idel,

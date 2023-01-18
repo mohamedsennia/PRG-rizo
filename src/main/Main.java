@@ -22,18 +22,7 @@ public class Main extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Main frame = new Main();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+
 
 	/**
 	 * Create the frame.
@@ -80,8 +69,16 @@ public class Main extends JFrame {
 		});
 		panel.add(Reacheminer);
 		
-		JButton Autre = new JButton("Autre param\u00E8tres");
+		JButton Autre = new JButton("Consulter les Aeroports");
+
 		Autre.setBounds(479, 279, 218, 23);
+		Autre.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ConsulterAeroPorts c=new ConsulterAeroPorts();
+				c.setVisible(true);
+			}});
 		panel.add(Autre);
 		
 	

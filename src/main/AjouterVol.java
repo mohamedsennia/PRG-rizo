@@ -49,7 +49,7 @@ public class AjouterVol extends JFrame implements ItemListener  {
 		 choiceArv = new Choice();
 		
 		AjouterVol.setEnabled(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 615, 408);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -68,11 +68,10 @@ public class AjouterVol extends JFrame implements ItemListener  {
 	
 		choiceAvion.setBounds(127, 121, 103, 20);
 		int i;
-		/*for(i=0;i<MainR.avions.size();i++) {
-			choiceAvion.add(MainR.avions.get(i).name);
-		}*/
+	
 		for(int j=0;j<MainR.aeroports.get(0).avions.size();j++) {
-			choiceAvion.add(MainR.aeroports.get(0).avions.get(j).GetName());
+		
+			choiceAvion.add(MainR.aeroports.get(0).avions.get(j));
 			
 		}
 		contentPane.add(choiceAvion);
@@ -208,7 +207,10 @@ public class AjouterVol extends JFrame implements ItemListener  {
 				//
 				for(int i=0;i<MainR.aeroports.size();i++) {
 					if(MainR.aeroports.get(i).name==choiceDpt.getSelectedItem()) {
-						
+						for(int j=0;j<MainR.avions.size();j++) {
+							if(MainR.avions.get(j).name.equals(MainR.aeroports.get(i).avions.get(choiceAvion.getSelectedIndex()))) {
+							MainR.avions.get(j).etat=Etat.Standby;}
+						}
 						MainR.addVol(new Vol(id.getText(),MainR.aeroports.get(i).avions.get(choiceAvion.getSelectedIndex()),MainR.aeroports.get(i),aeroportVisite,LocalTime.of(Integer.valueOf(choiceHeure.getSelectedItem()),Integer.valueOf(choiceMinute.getSelectedItem())),TypeVol.Direct));
 					break;
 					}
@@ -223,7 +225,7 @@ public class AjouterVol extends JFrame implements ItemListener  {
 		
 	}
 	public void c() {
-		this.setVisible(false);
+	this.setVisible(false);
 		this.dispose();
 	}
 	@Override
@@ -236,7 +238,7 @@ public class AjouterVol extends JFrame implements ItemListener  {
 			if(MainR.aeroports.get(i).name==choiceDpt.getSelectedItem()) {
 			
 				for(int j=0;j<MainR.aeroports.get(i).avions.size();j++) {
-					choiceAvion.add(MainR.aeroports.get(i).avions.get(j).GetName());
+					choiceAvion.add(MainR.aeroports.get(i).avions.get(j));
 					choiceAvion.setEnabled(true);
 					choiceArv.setEnabled(true);
 				}

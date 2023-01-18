@@ -6,13 +6,13 @@ import java.util.ArrayList;
 
 public class Vol extends Thread {
 String id;
-Avion avion;
+String avion;
 Aeroport aeroportDpr;
 ArrayList<Aeroport>aeroportVisite;
-LocalTime heureDpt,heureArv;
+LocalTime heureDpt;
 TypeVol type;
-String etat;
-public Vol(String id, Avion avion, Aeroport aeroportDpr, ArrayList<Aeroport> aeroportVisite, LocalTime heureDpt,
+
+public Vol(String id, String avion, Aeroport aeroportDpr, ArrayList<Aeroport> aeroportVisite, LocalTime heureDpt,
 		 TypeVol type) {
 	super();
 	this.id = id;
@@ -24,10 +24,12 @@ public Vol(String id, Avion avion, Aeroport aeroportDpr, ArrayList<Aeroport> aer
 	this.type = type;
 }
 public void run() {
-	this.etat="planned";
+	
 	boolean f=false;
 	LocalTime now;
-	avion.setEtat(Etat.Standby);
+	String av =this.avion;
+	aeroportDpr.removeAvion(avion);
+	
 	/*while(f==false) {
 		now=LocalTime.now();
 		if(now.getHour()==heureDpt.getHour()&&now.getMinute()==heureDpt.getMinute()) {
@@ -35,7 +37,7 @@ public void run() {
 			
 		}else {
 			try {
-				System.out.println("waiting");
+				
 				Thread.sleep(60000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -43,30 +45,35 @@ public void run() {
 			}
 		}
 	}*/
-	System.out.println(aeroportDpr.localisation);
+	
 	while(aeroportVisite.size()>0) {
 		
-		
 			
-			launch();
+		for(int j=0;j<MainR.avions.size();j++) {
+			if(MainR.avions.get(j).name.equals(av)) {
+				MainR.avions.get(j).etat=Etat.Active;
+			}
+		
+		}
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	
 	}
-	System.out.println(aeroportDpr.localisation);
-}
-private void launch() {
-	// TODO Auto-generated method stub
 	
+}
+
+public float[] launch(Point position) {
+	// TODO Auto-generated method stub
+	float[] h=new float[4];
 	float a;
 	float b;
-	if(avion.getPosition().x!=aeroportVisite.get(0).localisation.x) {
-		 a=((float)(aeroportVisite.get(0).localisation.y-avion.getPosition().y)/(float)(aeroportVisite.get(0).localisation.x-avion.getPosition().x));
-		 b=((float)(-1*avion.getPosition().x)*(aeroportVisite.get(0).localisation.y-avion.getPosition().y)+avion.getPosition().y*(aeroportVisite.get(0).localisation.x-avion.getPosition().x))/(float)(aeroportVisite.get(0).localisation.x-avion.getPosition().x);
+	if(position.x!=aeroportVisite.get(0).localisation.x) {
+		 a=((float)(aeroportVisite.get(0).localisation.y-position.y)/(float)(aeroportVisite.get(0).localisation.x-position.x));
+		 b=((float)(-1*position.x)*(aeroportVisite.get(0).localisation.y-position.y)+position.y*(aeroportVisite.get(0).localisation.x-position.x))/(float)(aeroportVisite.get(0).localisation.x-position.x);
 	}else {
 		 a=0;
 		 b=0;
@@ -77,36 +84,43 @@ private void launch() {
 		
 		if(MainR.getVols(i).id.equals(this.id)){
 			
-			if(avion.position.x<aeroportVisite.get(0).localisation.x) {
+			if(position.x<aeroportVisite.get(0).localisation.x) {
 			
-			avion.start(a,b,1,i);
-			aeroportDpr.removeAvion(avion);
+		
+			h[0]=a;
+			h[1]=b;
+			h[2]=1;
+			h[3]=i;
+	
 			}else {
-				if(avion.position.x>aeroportVisite.get(0).localisation.x) {
+				if(position.x>aeroportVisite.get(0).localisation.x) {
 					
-					avion.start(a,b,-1,i);
-					aeroportDpr.removeAvion(avion);
+				
+					h[0]=a;
+					h[1]=b;
+					h[2]=-1;
+					h[3]=i;
 				}else {
-					if(avion.position.y<aeroportVisite.get(0).localisation.y) {
+					if(position.y<aeroportVisite.get(0).localisation.y) {
 						
-						avion.start(a,b,1,i);
-						aeroportDpr.removeAvion(avion);
+						
+						h[0]=a;
+						h[1]=b;
+						h[2]=1;
+						h[3]=i;
+						
 					}else {
-						
-						avion.start(a,b,-1,i);
-						aeroportDpr.removeAvion(avion);
+						h[0]=a;
+						h[1]=b;
+						h[2]=-1;
+						h[3]=i;
+					
 					}
 				}
 			}
 		}
 	}
-	
+	return h;
 }
-public void change(Aeroport aeroportPause) {
-	
-	this.avion.end();
-	this.aeroportVisite.add(0,aeroportPause);
 
-	this.etat="planned";
-}
 }

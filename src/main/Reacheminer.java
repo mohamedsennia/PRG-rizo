@@ -33,7 +33,7 @@ public class Reacheminer extends JFrame {
 		indexAv=new int[MainR.avions.size()];
 		indexAero=new int[MainR.aeroports.size()];
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 215);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -41,13 +41,13 @@ public class Reacheminer extends JFrame {
 		contentPane.setLayout(null);
 		
 		JLabel a = new JLabel("Avion");
-		a.setBounds(24, 52, 46, 14);
+		a.setBounds(96, 55, 46, 14);
 		contentPane.add(a);
 		
 		Choice Avion = new Choice();
 	
 		k=0;
-		Avion.setBounds(76, 46, 111, 20);
+		Avion.setBounds(162, 55, 111, 20);
 		for(int i=0;i<MainR.avions.size();i++) {
 			if(MainR.avions.get(i).etat==Etat.Active) {
 				Avion.add(MainR.avions.get(i).name);
@@ -58,86 +58,62 @@ public class Reacheminer extends JFrame {
 		contentPane.add(Avion);
 		
 		l=0;
-		Choice Aeroport = new Choice();
-		Aeroport.setBounds(76, 141, 111, 20);
-		Aeroport.setEnabled(b);
-		for(int i=0;i<MainR.aeroports.size();i++) {
-			if(MainR.aeroports.get(i).avions.size()<MainR.aeroports.get(i).capaciteAv) {
-				Aeroport.add(MainR.aeroports.get(i).name);
-				indexAero[l]=i;
-				l=l+1;
-			}
-		}
-		contentPane.add(Aeroport);
-		
-		JRadioButton maneul = new JRadioButton("MANUEL");
-		maneul.setBounds(78, 101, 109, 23);
-		maneul.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(b==false) {
-					b=true;
-					Aeroport.setEnabled(b);
-					
-				}else {
-					b=false;
-					Aeroport.setEnabled(b);
-				}
-				
-			}
-			
-		});
-		contentPane.add(maneul);
-		
-		JLabel s = new JLabel("Aeroport");
-		s.setBounds(10, 141, 46, 14);
-		contentPane.add(s);
-		
 		
 		Button Confirm = new Button("Reacheminer");
-		Confirm.setBounds(179, 205, 70, 22);
+		Confirm.setBounds(179, 116, 94, 22);
 		contentPane.add(Confirm);
 		Confirm.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				if(b==true) {
-				for(int i=0;i<MainR.vols.size();i++) {
-					
-					
-					if(MainR.vols.get(i).avion.GetName()==Avion.getSelectedItem()) {
-						
-						for(int j=0;j<MainR.aeroports.size();j++) {
-							if(MainR.aeroports.get(j).name==Aeroport.getSelectedItem()) {
+				for(int i=0;i<MainR.avions.size();i++) {
+					if(MainR.avions.get(i).name.equals(Avion.getSelectedItem())) {
+						if(MainR.avions.get(i).restant<800) {
+							double min =10000000;
+							int indexMin=-1;
+							for(int j=0;j<MainR.aeroports.size();j++) {
+								if((MainR.avions.get(i).position.distance(MainR.aeroports.get(j).localisation)<min)&&MainR.aeroports.get(j).avions.size()<MainR.aeroports.get(j).capaciteAv){
+									min=MainR.avions.get(i).position.distance(MainR.aeroports.get(j).localisation);
+									indexMin=j;
+								}
+							}
+							for(int j=0;j<MainR.vols.size();j++) {
+								if(MainR.vols.get(j).avion.equals(Avion.getSelectedItem())) {
+									MainR.vols.get(j).aeroportVisite.add(0,MainR.aeroports.get(indexMin));
+									MainR.avions.get(i).setEtat(Etat.Standby);
+								}
+								}
+						}else {
+						for(int j=0;j<MainR.vols.size();j++) {
+							if(MainR.vols.get(j).avion.equals(Avion.getSelectedItem())) {
+								Point tempP=new Point(MainR.avions.get(i).getPosition().x,MainR.avions.get(i).getPosition().y);
+								boolean b=false;
+								if(MainR.avions.get(i).getPosition().x<MainR.vols.get(j).aeroportVisite.get(0).localisation.x) {
+									tempP.y=tempP.y+40;
 								
-								MainR.vols.get(i).change(MainR.aeroports.get(j));
+								}else {
+									tempP.y=tempP.y-40;
+									
+								}
+								
+								if(MainR.avions.get(i).getPosition().y<MainR.vols.get(j).aeroportVisite.get(0).localisation.y) {
+										tempP.x=tempP.x-40;
+								}else {
+										tempP.x=tempP.x+40;
+								
+								}
+								
+								MainR.vols.get(j).aeroportVisite.add(0,new Aeroport("temp",tempP,1));
+								MainR.avions.get(i).setEtat(Etat.Standby);
 							}
 						}
-						//
-					}
+						}}
 				}
-			}else {
 				
-				int index=-1;
-				double min=600000;
-				for(int i=0;i<l;i++) {
-					
-					double distance=MainR.aeroports.get(indexAero[i]).localisation.distance(MainR.avions.get(indexAv[Avion.getSelectedIndex()]).position);
-			
-					if(distance<min) {
-						min=distance;
-						index=indexAero[i];
-					}
-				}
-				System.out.println(index);
-				for(int i=0;i<MainR.vols.size();i++) {
-					if(MainR.vols.get(i).avion.GetName()==Avion.getSelectedItem()) {
-						MainR.vols.get(i).change(MainR.aeroports.get(index));
-					}
-				}
-			}
-		}});
+			c();}});
+	}
+	public void c() {
+		this.setVisible(false);
+		this.dispose();
 	}
 }

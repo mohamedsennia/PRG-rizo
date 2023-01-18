@@ -5,21 +5,22 @@ import java.util.ArrayList;
 public class Aeroport {
 	Point localisation;
 	String name;
-	int capaciteAv,KeroR;
-	ArrayList<Avion> avions;
+	int capaciteAv,KeroR,CapaciteKero;
+	ArrayList<String> avions;
 public Aeroport(String name,Point localisation,int capaciteAv) {
 	this.localisation=new Point(localisation.x,localisation.y);;
 	this.name=name;
 	this.capaciteAv=capaciteAv;
-	this.KeroR=3000;
+	CapaciteKero=10000;
+	this.KeroR=CapaciteKero;
 	
-	avions = new ArrayList<Avion> ();
+	avions = new ArrayList<String> ();
 }
-public void addAvion(Avion a) {
+public void addAvion(String a) {
 	avions.add(a);
 	
 }
-public void removeAvion(Avion a) {
+public void removeAvion(String a) {
 	avions.remove(a);
 }
 }
